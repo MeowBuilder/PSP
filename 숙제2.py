@@ -51,7 +51,64 @@ for Person in Fear:
 
 print(result)
 """
+# 실습. 상하좌우
+"""
+Board_SIZE = int(input())
+Plans = input().split()
+r,c = 1,1
 
+dr = [-1,1,0,0]
+dc = [0,0,-1,1]
+move_types = ['L','R','U','D']
+
+for plan in Plans:
+    for i in range(len(move_types)):
+        if plan == move_types[i]:
+            nr = r + dr[i]
+            nc = c + dc[i]
+    if nc < 1 or nr < 1 or nc > Board_SIZE or nr > Board_SIZE:
+        continue
+    r,c = nr,nc
+print(r,c)
+"""
+# 실습. 왕실의 나이트
+"""
+data = input()
+r = int(data[1])
+c = ord(data[0]) - ord('a') + 1
+result = 0
+for dr,dc in [[-2,-1],[-2,1],[-1,-2],[-1,2],[2,-1],[2,1],[1,-2],[1,2]]:
+    nr,nc = r+dr,c+dc
+    if 1 <= nr <= 8 and 1 <= nc <= 8:
+        result += 1
+print(result)
+"""
+# 실습. 시각
+"""
+Input = int(input())
+count = 0
+for i in range(Input+1):
+    for j in range(60):
+        for k in range(60):
+            if '3' in str(i) + str(j) + str(k):
+                count += 1
+print(count)
+"""
+# 실습. 문자열 재정렬
+"""
+Input = input()
+Output_str = []
+Output_sum = 0
+for c in Input:
+    if c.isdigit():
+        Output_sum += int(c)
+    else:
+        Output_str.append(c)
+Output_str.sort()
+if Output_sum != 0:
+    Output_str.append(str(Output_sum))
+print(''.join(Output_str))
+"""
 #숙제 1. 백준 동전 0
 """
 N,K = map(int,input().split())
@@ -68,33 +125,78 @@ print(count)
 """
 
 #숙제 2. 백준 블랙잭
-# 틀림
+"""
+from itertools import combinations
 N,M = map(int,input().split())
 card = list(map(int,input().split()))
-MAX_list = []
-i = 0
 Max = 0
-card_id = 0
-while i < N:
-    if Max + card[card_id] <= M:
-        Max += card[card_id]
-        card_id += 1
-    else:
-        card_id += 1
+for c in combinations(card,3):
+    if sum(c) <= M:
+        Max = max(Max,sum(c))
+print(Max)
+"""
 
-    if card_id >= N:
-        MAX_list.append(Max)
-        Max = 0
-        card_id = 0
-        i += 1
-print(max(MAX_list))
+#숙제 3. TUKorea 자산증감
 
-#숙제 3. 백준
-
-
-#숙제 4. 백준
+Day = int(input())
+Input = input().split()
+Answer = [['.'] * Day for _ in range(Day)]
+Start = [Day//2,0]
+Move_dict = dict({'+':[-1,1,'/'],'-':[1,1,'\\'],'=':[0,1,'_']})
+for c in Input:
+    Start += Move_dict[c][:2]
+    Answer[Start[0]][Start[1]] = Move_dict[c][2]
+#한 열이나 행이 모두 '.'이면 없애는 작업
 
 
+
+#숙제 4. TUKorea 균형 잡힌 영양소
+# 더럽지만 일단 통과
+"""
+from itertools import combinations
+N = int(input())
+Food = []
+for i in range(N):
+    T,D,G = map(int,input().split())
+    Cal = T*4 + D*4 + G*9
+    Food.append([T,D,G,Cal])
+gizun = list(map(int,input().split()))
+count = 0
+for i in range(1,4):
+    for c in combinations(Food,i):
+        T_sum = 0
+        D_sum = 0
+        G_sum = 0
+        cal_sum = 0
+        for F in c:
+            T_sum += F[0]
+            D_sum += F[1]
+            G_sum += F[2]
+            cal_sum += F[3]
+        if T_sum <= gizun[0] and D_sum >= gizun[1] and G_sum <= gizun[2] and cal_sum <= gizun[3]:
+            count += 1
+print(count)
+"""
+# 교수님 풀이
+"""
+from itertools import combinations
+N = int(input())
+Food = [list(map(int,input().split())) for _ in range(N)]
+gizun = list(map(int,input().split()))
+result = 0
+for i in range(1,4):
+    if i > N: break
+    for food_comb in combinations(Food,i):
+        T_sum, D_sum, G_sum, cal_sum = 0,0,0,0
+        for F in food_comb:
+            T_sum += F[0]
+            D_sum += F[1]
+            G_sum += F[2]
+            cal_sum += F[0] * 4 + F[1] * 4 + F[2] * 9
+        if T_sum <= gizun[0] and D_sum >= gizun[1] and G_sum <= gizun[2] and cal_sum <= gizun[3]:
+            result += 1
+print(result)
+"""
 #숙제 5. 프로그래머스 체육복
 """ # 내 풀이
 def solution(n, lost, reserve):
