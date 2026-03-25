@@ -11,6 +11,8 @@ while N > 1:
         count += 1
 print(count)
 """
+from turtledemo.penrose import start
+
 """
 N,K = map(int,input().split())
 count = 0
@@ -136,19 +138,37 @@ for c in combinations(card,3):
 print(Max)
 """
 
-#숙제 3. TUKorea 자산증감
-
+#숙제 3. TUKorea 자산증감 (Joat)
 Day = int(input())
-Input = input().split()
-Answer = [['.'] * Day for _ in range(Day)]
-Start = [Day//2,0]
-Move_dict = dict({'+':[-1,1,'/'],'-':[1,1,'\\'],'=':[0,1,'_']})
-for c in Input:
-    Start += Move_dict[c][:2]
-    Answer[Start[0]][Start[1]] = Move_dict[c][2]
-#한 열이나 행이 모두 '.'이면 없애는 작업
+Input = input()
+Answer = [['.'] * Day]
+r = 0
+for i in range(Day):
+    char = Input[i]
+    if char == '+':
+        if i > 0 and Input[i - 1] == '+':
+            r -= 1
+    elif char == '-':
+        if i > 0 and Input[i - 1] == '-':
+            r += 1
+        elif i > 0 and Input[i - 1] == '=':
+            r += 1
+    elif char == '=':
+        if r > 0 and Input[i - 1] == '+':
+            r -= 1
 
+    if r < 0:
+        Answer.insert(0, ['.' for _ in range(Day)])
+        r = 0
+    elif r >= len(Answer):
+        Answer.append(['.' for _ in range(Day)])
+        r = len(Answer) - 1
 
+    draw_char = '/' if char == '+' else '\\' if char == '-' else '_'
+    Answer[r][i] = draw_char
+
+for row in Answer:
+    print("".join(row))
 
 #숙제 4. TUKorea 균형 잡힌 영양소
 # 더럽지만 일단 통과
