@@ -109,35 +109,32 @@ def solution(dartResult):
 """
 
 def solution(dartResult):
-    answer = 0
-    Bonus = ['S', 'D', 'T']
-    Option = ['*', '#']
-
-    Out = [[]]
-    cur_dart_score = []
-    last_dart_score = []
-    for i in range(len(dartResult)):
-        if dartResult[i] in Bonus or dartResult[i] in Option:
-            if dartResult[i] == 'S':
-                cur_dart_score.append('**1')
-            elif dartResult[i] == 'D':
-                cur_dart_score.append('**2')
-            elif dartResult[i] == 'T':
-                cur_dart_score.append('**3')
-            elif dartResult[i] == '*':
-                cur_dart_score.append('*2')
-                last_dart_score.append('*2')
-            elif dartResult[i] == '#':
-                cur_dart_score.append('*-1')
-        else:
-            if cur_dart_score[len(cur_dart_score)-1] == '1' and dartResult[i] == '0':
-                pass
-            cur_dart_score.append(dartResult[i])
-
-    for scores in Out:
-        answer += eval(''.join(scores))
-
-    return answer
+    scores = []
+    current = ""
+    
+    Bonus = {'S': '1', 'D': '2', 'T': '3'}
+    i = 0
+    while i < len(dartResult):
+        char = dartResult[i]
+        
+        if char.isdigit():
+            if char == '1' and i + 1 < len(dartResult) and dartResult[i+1] == '0':
+                current = '10'
+                i += 1
+            else:
+                current = char
+        elif char in ['S', 'D', 'T']:
+            p = Bonus[char]
+            scores.append(f"{current}**{p}")
+        elif char == '*':
+            scores[-1] = f"({scores[-1]})*2"
+            if len(scores) > 1:
+                scores[-2] = f"({scores[-2]})*2"
+        elif char == '#':
+            scores[-1] = f"({scores[-1]})*-1"
+        i += 1
+        
+    return sum(eval(s) for s in scores)
 
 print(solution('1S2D*3T'))
 print(solution('1D2S#10S'))
