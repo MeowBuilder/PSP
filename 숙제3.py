@@ -1,5 +1,89 @@
+from asyncio import graph
 from collections import deque
 
+# 실습 음료수 얼려 먹기
+'''
+4 5
+00110
+00011
+11111
+00000
+'''
+"""
+def bfs(r,c):
+    queue = deque([(r,c)])
+    graph[r][c] = 1
+    while queue:
+        r,c = queue.popleft()
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] == 0:
+                graph[nr][nc] = 1
+                queue.append((nr,nc))
+
+def dfs_stack(r,c):
+    stack = deque([(r,c)])
+    while stack:
+        r,c = stack.pop()
+        if graph[r][c] == 0:
+            graph[r][c] = 1
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] == 0:
+                    stack.append((nr, nc))
+
+def dfs(r,c):
+    graph[r][c] = 1
+    for dr,dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+        nr,nc = r+dr,c+dc
+        if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] == 0:
+            dfs(nr,nc)
+    pass
+R,C = map(int, input().split())
+graph = [list(map(int,input())) for _ in range(R)]
+ICE = 0
+for r in range(R):
+    for c in range(C):
+        if graph[r][c] == 0:
+            ICE += 1
+            bfs(r,c)
+
+print(ICE)
+"""
+# 실습 미로 탈출
+"""
+'''
+5 6
+101010
+111111
+000001
+111111
+111111
+'''
+def bfs(r,c):
+    queue = deque([(r,c)])
+    while queue:
+        r,c = queue.popleft()
+        for dr,dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+            nr, nc = r+dr,c+dc
+            if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] == 1:
+                graph[nr][nc] = graph[r][c] + 1
+                queue.append((nr, nc))
+R,C = map(int, input().split())
+graph = [list(map(int,input())) for _ in range(R)]
+bfs(0,0)
+print(graph)
+print(graph[R-1][C-1])
+
+#[[3, 0, 5, 0, 7, 0],
+# [2, 3, 4, 5, 6, 7],
+# [0, 0, 0, 0, 0, 8],
+# [14, 13, 12, 11, 10, 9],
+# [15, 14, 13, 12, 11, 10]]
+"""
+
+# 숙제 1. 백준 DFS와 BFS
+"""
 def dfs_stack(node):
     stack = deque([node])
     while stack:
@@ -30,8 +114,6 @@ def bfs(start):
                 visited[i] = True
                 print(i, end=' ')
 
-# 숙제 1. 백준 DFS와 BFS
-
 N,M,V = map(int, input().split())
 graph = [[False] * (N+1) for _ in range(N+1)]
 for i in range(M):
@@ -40,8 +122,92 @@ for i in range(M):
     graph[E][S] = True
 
 visited = [False] * (N+1)
-dfs_stack(V)
+dfs(V)
 print('')
 
 visited = [False] * (N+1)
 bfs(V)
+"""
+# 숙제 2. 백준 숨바꼭질
+"""
+from collections import deque
+
+def bfs(N):
+    distance = 0
+    Visited.add(N)
+    queue = deque([(N,distance)])
+    while queue:
+        X,distance = queue.popleft()
+        if X == K:
+            print(distance)
+            break
+        for NX in [X-1,X+1,2*X]:
+            if 0<=NX<=100000 and NX not in Visited:
+                Visited.add(NX)
+                queue.append((NX,distance+1))
+
+
+
+N,K = map(int, input().split())
+Visited = set()
+bfs(N)
+"""
+"""
+#교수님 답
+def BFS(N):
+    distance = 0
+    Visited[N] = True
+    queue = deque([(N,distance)])
+    while queue:
+        X,dis = queue.popleft()
+        if X == K:
+            print(dis)
+            break
+        for NX in [X-1,X+1,2*X]:
+            if 0<=NX<=100000 and not Visited[NX]:
+                Visited[NX] = True
+                queue.append((NX,dis+1))
+
+
+N,K = map(int, input().split())
+Visited = [False] * 100001
+BFS(N)
+"""
+# 숙제 3. TUKorea 중요한 교차로
+
+N,M = map(int, input().split())
+graph = [[] * (N+1) for _ in range(N+1)]
+
+for i in range(M):
+    S,E = map(int, input().split())
+    graph[S][E] = True
+
+
+
+# 숙제 6. 백준 섬의 개수
+"""
+from collections import deque
+def bfs(r,c):
+    queue = deque([(r,c)])
+    graph[r][c] = 0
+    while queue:
+        r,c = queue.popleft()
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] == 1:
+                graph[nr][nc] = 0
+                queue.append((nr, nc))
+
+while True:
+    C,R = map(int, input().split())
+    if R == 0 and C == 0:
+        break
+    graph = [list(map(int,input().split())) for _ in range(R)]
+    count = 0
+    for r in range(R):
+        for c in range(C):
+            if graph[r][c] == 1:
+                count += 1
+                bfs(r,c)
+    print(count)
+"""
