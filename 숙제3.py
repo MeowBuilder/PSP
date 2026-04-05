@@ -174,16 +174,75 @@ Visited = [False] * 100001
 BFS(N)
 """
 # 숙제 3. TUKorea 중요한 교차로
+"""
+def DFS(v, i, graph, N, visited):
+    visited[v] = True
+    for c in range(N):
+        if c != i and graph[v][c] and not visited[c]:
+            DFS(c, i, graph, N, visited)
 
 N,M = map(int, input().split())
-graph = [[] * (N+1) for _ in range(N+1)]
+graph = [[False] * (N) for _ in range(N)]
 
-for i in range(M):
+for _ in range(M):
     S,E = map(int, input().split())
-    graph[S][E] = True
+    graph[S-1][E-1] = True
+    graph[E-1][S-1] = True
+
+answer = []
+for i in range(N):
+    visited = [False] * N
+    v = (i+1) % N
+    DFS(v,i,graph,N,visited)
+    
+    for c in range(N):
+        if i != c and not visited[c]:
+            answer.append(i+1)
+            break
+print(len(answer))
+for a in answer:
+    print(a)
+"""
+
+# 숙제 4. 프로그래머스 여행경로
+"""
+def DFS(port,path,graph,ports,nTickets):
+    r = ports.index(port)
+    for c in range(len(ports)):
+        if graph[r][c] > 0:
+            graph[r][c] -= 1
+            port = ports[c]
+            nTickets -= 1
+            (answer,nTickets) = DFS(port,path+[port],graph,ports,nTickets)
+            if nTickets == 0:
+                return (answer,nTickets)
+            else:
+                graph[r][c] += 1
+                nTickets += 1
+            
+    return (path,nTickets)
 
 
+def solution(tickets):
+    ports = set()
+    for path in tickets:
+        ports = ports.union(set(path))
+    ports = sorted(list(ports))
+    
+    N = len(ports)
+    graph = [[0] * N for _ in range(N)]
+    for [a,b] in tickets:
+        r = ports.index(a)
+        c = ports.index(b)
+        graph[r][c] += 1
 
+    nTickets = len(tickets)
+    port = 'ICN'
+    path = ['ICN']
+    (answer,nTickets) = DFS(port,path,graph,ports,nTickets)
+    
+    return answer
+"""
 # 숙제 6. 백준 섬의 개수
 """
 from collections import deque
