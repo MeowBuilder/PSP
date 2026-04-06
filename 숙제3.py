@@ -128,6 +128,7 @@ print('')
 visited = [False] * (N+1)
 bfs(V)
 """
+
 # 숙제 2. 백준 숨바꼭질
 """
 from collections import deque
@@ -173,6 +174,7 @@ N,K = map(int, input().split())
 Visited = [False] * 100001
 BFS(N)
 """
+
 # 숙제 3. TUKorea 중요한 교차로
 """
 def DFS(v, i, graph, N, visited):
@@ -198,6 +200,41 @@ for i in range(N):
     for c in range(N):
         if i != c and not visited[c]:
             answer.append(i+1)
+            break
+print(len(answer))
+for a in answer:
+    print(a)
+"""
+"""
+from collections import deque
+def DFS(v,i):
+    stack = deque([V])
+    while stack:
+        node = stack.pop()
+        if not visited[node]:
+            visited[node] = True
+            for adj in graph[node]:
+                if adj != i and not visited[adj]:
+                    stack.append(adj)
+
+
+N,M = map(int, input().split())
+graph = [[] for _ in range(N+1)]
+for _ in range(M):
+    S,E = map(int, input().split())
+    graph[S].append(E)
+    graph[E].append(S)
+
+answer = []
+
+for i in range(1,N+1):
+    visited = [False] * (N+1)
+    if i == 1: V = 2
+    else: V = 1
+    DFS(V,i)
+    for j in range(1,N+1):
+        if j != i and not visited[j]:
+            answer.append(i)
             break
 print(len(answer))
 for a in answer:
@@ -243,6 +280,64 @@ def solution(tickets):
     
     return answer
 """
+"""
+# DFS 재귀, preorder traversal, node -> left -> right
+def DFS(port,path,graph,ports,nTickets):
+    r = ports.index(port)
+    for c in range(len(ports)):
+        if graph[r][c] > 0:
+            graph[r][c] -= 1
+            nTickets -= 1
+            port = ports[c]
+            (answer,nTickets) = DFS(port,path+[port],graph,ports,nTickets)
+            if nTickets == 0:
+                return (answer,nTickets)
+            else:
+                graph[r][c] += 1
+                nTickets += 1
+    return (path,nTickets)
+
+def solution(tickets):
+    ports = set()
+    for [a,b] in tickets:
+        ports.add(a)
+        ports.add(b)
+    ports = list(ports)
+    ports.sort()
+
+    N = len(ports)
+    graph = [[0] * N for _ in range(N)]
+    for [a,b] in tickets:
+        r = ports.index(a)
+        c = ports.index(b)
+        graph[r][c] += 1
+    nTickets = len(tickets)
+    port = 'ICN'
+    path = ['ICN']
+    (answer,nTickets) = DFS(port,path,graph,ports,nTickets)
+    return answer
+"""
+# 숙제 5. 백준 알파벳 // 시간초과
+def DFS(r, c, path, MAX_PATH):
+    if len(path) > len(MAX_PATH):
+        MAX_PATH = path[:]
+        if len(MAX_PATH) > 26:
+            return MAX_PATH
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] not in path:
+            MAX_PATH = DFS(nr,nc,path+[graph[nr][nc]],MAX_PATH)
+    return MAX_PATH
+
+R,C = map(int, input().split())
+graph = [list(input()) for _ in range(R)] #한글자한글자 입력받으려면 그냥 input
+r,c = 0,0
+path = [graph[r][c]]
+MAX_PATH = []
+MAX_PATH = DFS(r,c,path,MAX_PATH)
+print(len(MAX_PATH))
+
+
 # 숙제 6. 백준 섬의 개수
 """
 from collections import deque
@@ -269,4 +364,37 @@ while True:
                 count += 1
                 bfs(r,c)
     print(count)
+"""
+
+# 자습. 백준 안전 영역
+"""
+import sys
+sys.setrecursionlimit(10**6)
+def DFS(r,c):
+    visited[r][c] = True
+    for nr,nc in [[r-1,c],[r+1,c],[r,c-1],[r,c+1]]:
+        if 0 <= nr < N and 0 <= nc < N and graph[nr][nc] > i and not visited[nr][nc]:
+            DFS(nr,nc)
+
+
+N = int(input())
+graph = [list(map(int,input().split())) for _ in range(N)]
+max_height = 0
+res = []
+
+for r in graph:
+    for c in r:
+        max_height = max(max_height,c)
+
+for i in range(max_height+1):
+    count = 0
+    visited = [[False] * N for _ in range(N)]
+    for r in range(N):
+        for c in range(N):
+            if graph[r][c] > i and not visited[r][c]:
+                count += 1
+                DFS(r,c)
+    res.append(count)
+
+print(max(res))
 """
