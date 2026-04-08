@@ -1,5 +1,6 @@
 from asyncio import graph
 from collections import deque
+from pydoc import visiblename
 
 # 실습 음료수 얼려 먹기
 '''
@@ -317,27 +318,61 @@ def solution(tickets):
     (answer,nTickets) = DFS(port,path,graph,ports,nTickets)
     return answer
 """
-# 숙제 5. 백준 알파벳 // 시간초과
-def DFS(r, c, path, MAX_PATH):
-    if len(path) > len(MAX_PATH):
-        MAX_PATH = path[:]
-        if len(MAX_PATH) > 26:
-            return MAX_PATH
+# 숙제 5. 백준 알파벳
+""" 
+#visited set버전(이게 더 오래걸림)
+import sys
+input = sys.stdin.readline #입력 속도 개선 / 개행문자포함 -> .strip()으로 개행문자 제거
+
+def DFS(r,c,dist):
+    global max_dist
+    if dist == 26:
+        max_dist = 26
+        return
+    max_dist = max(max_dist, dist)
     for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         nr, nc = r + dr, c + dc
-        if 0 <= nr < R and 0 <= nc < C and graph[nr][nc] not in path:
-            MAX_PATH = DFS(nr,nc,path+[graph[nr][nc]],MAX_PATH)
-    return MAX_PATH
+        if 0 <= nr < R and 0 <= nc < C and board[nr][nc] not in visited :
+            visited.add(board[nr][nc])
+            DFS(nr,nc,dist+1)
+            visited.remove(board[nr][nc])
+    pass
 
 R,C = map(int, input().split())
-graph = [list(input()) for _ in range(R)] #한글자한글자 입력받으려면 그냥 input
-r,c = 0,0
-path = [graph[r][c]]
-MAX_PATH = []
-MAX_PATH = DFS(r,c,path,MAX_PATH)
-print(len(MAX_PATH))
+board = [list(map(lambda x: ord(x)-65,input().strip())) for _ in range(R)]
+visited = set()
+max_dist = 0
+visited.add(board[0][0])
+DFS(0,0,1)
+print(max_dist)
+"""
+"""
+#교수님 버전
+import sys
+input = sys.stdin.readline #입력 속도 개선 / 개행문자포함 -> .strip()으로 개행문자 제거
 
+def DFS(r,c,dist):
+    global max_dist
+    if dist == 26:
+        max_dist = 26
+        return
+    max_dist = max(max_dist, dist)
+    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < R and 0 <= nc < C and not visited[board[nr][nc]]:
+            visited[board[nr][nc]] = True
+            DFS(nr,nc,dist+1)
+            visited[board[nr][nc]] = False
+    pass
 
+R,C = map(int, input().split())
+board = [list(map(lambda x: ord(x)-65,input().strip())) for _ in range(R)]
+visited = [False] * 26
+max_dist = 0
+visited[board[0][0]] = True
+DFS(0,0,1)
+print(max_dist)
+"""
 # 숙제 6. 백준 섬의 개수
 """
 from collections import deque
@@ -365,36 +400,39 @@ while True:
                 bfs(r,c)
     print(count)
 """
-
-# 자습. 백준 안전 영역
+# 숙제 7. 백준 트리 순회
 """
-import sys
-sys.setrecursionlimit(10**6)
-def DFS(r,c):
-    visited[r][c] = True
-    for nr,nc in [[r-1,c],[r+1,c],[r,c-1],[r,c+1]]:
-        if 0 <= nr < N and 0 <= nc < N and graph[nr][nc] > i and not visited[nr][nc]:
-            DFS(nr,nc)
+def preorder(node): # root->left->right
+    if node == '.':
+        return
+    print(node,end="")
+    preorder(graph[node][0])
+    preorder(graph[node][1])
 
+def inorder(node): # left->root->right
+    if node == '.':
+        return
+    inorder(graph[node][0])
+    print(node,end="")
+    inorder(graph[node][1])
+
+def postorder(node): # left->right->root
+    if node == '.':
+        return
+    postorder(graph[node][0])
+    postorder(graph[node][1])
+    print(node,end="")
 
 N = int(input())
-graph = [list(map(int,input().split())) for _ in range(N)]
-max_height = 0
-res = []
+graph = dict()
+for _ in range(N):
+    Node, Left, Right = input().split()
+    graph[Node] = (Left, Right)
 
-for r in graph:
-    for c in r:
-        max_height = max(max_height,c)
-
-for i in range(max_height+1):
-    count = 0
-    visited = [[False] * N for _ in range(N)]
-    for r in range(N):
-        for c in range(N):
-            if graph[r][c] > i and not visited[r][c]:
-                count += 1
-                DFS(r,c)
-    res.append(count)
-
-print(max(res))
+preorder('A')
+print("")
+inorder('A')
+print("")
+postorder('A')
 """
+
