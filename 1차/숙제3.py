@@ -1,6 +1,4 @@
-from asyncio import graph
 from collections import deque
-from pydoc import visiblename
 
 # 실습 음료수 얼려 먹기
 '''
