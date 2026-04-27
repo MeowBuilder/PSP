@@ -69,8 +69,7 @@ def print_matrix(MAT,mat_name):
                 print(MAT[i][j],end=' ')
             else:
                 print(MAT[i][j])
-"""
-"""
+
 A,B = map(int,input().split())
 matrix = [[(B*j)+(i+1) for i in range(B)] for j in range(A)]
 print_matrix(matrix,'M')
@@ -82,6 +81,7 @@ Trans = [[matrix[j][i]for j in range(A)] for i in range(B)]
 print_matrix(Trans,'T')
 """
 """
+# 교수님 풀이
 A,B = map(int,input().split())
 M = [[r*B + c+1 for c in range(B)] for r in range(A)]
 print_matrix(M,'M')

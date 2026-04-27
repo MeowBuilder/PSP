@@ -97,21 +97,29 @@ for c in postfix:
 print(S.pop())
 """
 # 숙제 4. 비밀지도
+"""
 # int to binary
 # print(list(bin(int(input())).replace('0b', '')))
 def solution(n, arr1, arr2):
-    array = [['' for _ in range(n)] for _ in range(n)]
-    for i in range(len(arr1)):
-        bin_code = bin(arr1[i]).replace('0b', '')[::-1]
-        print(bin_code)
-        for x in range(n):
-            pass
+    array = []
+    for i in range(n):
+        bincode = bin(arr1[i] | arr2[i]).replace('0b', '')
+        while len(bincode) < n:
+            bincode = '0' + bincode
+        line = []
+        for c in bincode:
+            if c != '0':
+                line.append('#')
+            else:
+                line.append(' ')
+        array.append(''.join(line))
     return array
+
 print(solution(5,[9,20,28,18,11],[30, 1, 21, 17, 28]))
 # ["#####","# # #", "### #", "# ##", "#####"]
-print(solution(5,[46, 33, 33 ,22, 31, 50],	[27 ,56, 19, 14, 14, 10]))
+print(solution(6,[46, 33, 33 ,22, 31, 50],	[27 ,56, 19, 14, 14, 10]))
 # ["######", "### #", "## ##", " #### ", " #####", "### # "]
-
+"""
 # 숙제 5. 어두운 굴다리
 """
 N = int(input())
@@ -139,5 +147,61 @@ while start <= end:
         end = mid - 1
     else:
         start = mid + 1
+print(result)
+"""
+# 숙제 6. 공유기 설치
+"""
+N,C = map(int, input().split())
+array = [int(input()) for _ in range(N)]
+array.sort()
+
+def check(mid):
+    point = array[0] # 이전 설치한 공유기 위치
+    count = 1 # 설치한 공유기 개수
+    for i in range(1, N):
+        if array[i] - point >= mid:
+            point = array[i]
+            count += 1
+            if count == C:
+                return True
+    return False
+
+start = 0
+end = max(array)
+result = 0
+while start <= end:
+    mid = (start + end) // 2
+    if check(mid):
+        result = mid
+        start = mid + 1
+    else:
+        end = mid - 1
+print(result)
+"""
+# 숙제 7.  예산
+"""
+N = int(input())
+L = list(map(int,input().split()))
+M = int(input())
+
+def check(mid):
+    total = 0
+    for x in L:
+        if x > mid:
+            total += mid
+        else:
+            total += x
+    return total <= M
+
+start = 0
+end = max(L)
+result = 0
+while start <= end:
+    mid = (start + end) // 2
+    if check(mid):
+        result = mid
+        start = mid + 1
+    else:
+        end = mid - 1
 print(result)
 """
