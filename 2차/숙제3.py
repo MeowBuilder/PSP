@@ -63,6 +63,7 @@ else:
     print(dp[M])
 """
 # 실습 금광
+"""
 for tc in range(int(input())):
     n,m = map(int, input().split())
     List = list(map(int, input().split()))
@@ -85,8 +86,75 @@ for tc in range(int(input())):
     for i in range(n):
         result = max(result,cave[i][m-1])
     print(result)
+"""
+# 숙제 1. 정수삼각형
+"""
+# 탑다운
+def solution(triangle):
+    for i in range(1,len(triangle)):
+        for j in range(len(triangle[i])):
+            if j == 0: Left = 0
+            else: Left = triangle[i-1][j-1]
 
-# 숙제 5. 설탕배달
+            if j == len(triangle[i])-1: Right = 0
+            else: Right = triangle[i-1][j]
+
+            triangle[i][j] = triangle[i][j] + max(Left, Right)
+    answer = 0
+    for i in range(len(triangle[len(triangle)-1])):
+        answer = max(answer,triangle[len(triangle)-1][i])
+    return answer
+print(solution([[7],[3,8],[8,1,0],[2,7,4,4],[4,5,2,6,5]]))
+"""
+"""
+# 바텀업 (교수님 풀이)
+def solution(triangle):
+    L = len(triangle)
+    for i in range(L-2,-1,-1):
+        for j in range(len(triangle[i])):
+            triangle[i][j] = triangle[i][j] + max(triangle[i+1][j],triangle[i+1][j+1])
+    return triangle[0][0]
+print(solution([[7],[3,8],[8,1,0],[2,7,4,4],[4,5,2,6,5]]))
+"""
+# 숙제 2. 등굣길
+"""
+def solution(m, n, puddles):
+    dp = [[0]*(m+1) for _ in range(n+1)]
+    puddleList = [[0]*(m+1) for _ in range(n+1)]
+    for c,r in puddles:
+        puddleList[r][c] = 1
+    for r in range(1,n+1):
+        for c in range(1,m+1):
+            if r == 1 and c == 1:
+                dp[r][c] = 1
+            elif puddleList[r][c] == 1:
+                dp[r][c] = 0
+            else:
+                dp[r][c] = dp[r-1][c] + dp[r][c-1]
+    return dp[n][m] % 1000000007
+print(solution(4,3,[[2,2]]))
+"""
+# 숙제 5. 도둑질
+"""
+#dp0[i] : 0~L-2
+#dp1[i] : 1~L-1
+def solution(money):
+    L = len(money)
+    dp0 = [0] * L
+    dp0[0] = money[0]
+    dp0[1] = max(money[0], money[1])
+    for i in range(2,L-1):
+        dp0[i] = max(dp0[i-1],dp0[i-2] + money[i])
+
+    dp1 = [0] * L
+    dp1[1] = money[1]
+    for i in range(2, L):
+        dp1[i] = max(dp1[i - 1], dp1[i - 2] + money[i])
+
+    return max(dp0[L-2], dp1[L-1])
+print(solution([1,2,3,1]))
+"""
+# 숙제 6. 설탕배달
 # 이 유형은 내가 옮기려는 무게(i)에서 선택한 포대의 무게(k)만큼
 # 뺀 무게의 운반횟수(dp[i-k])에서 +1 한 값(6kg 운반은 3kg 운반 + 3kg운반)과
 # 기존의 최솟값을 비교해 dp를 업데이트
@@ -106,7 +174,7 @@ if dp[N] == 5001:
 else:
     print(dp[N])
 """
-# 숙제 6. 1로 만들기
+# 숙제 7. 1로 만들기
 """
 N = int(input())
 dp = [0] * (N+1)
@@ -117,4 +185,28 @@ for i in range(2, N+1):
     if i % 3 == 0:
         dp[i] = min(dp[i], dp[i//3] + 1)
 print(dp[N])
+"""
+# 숙제 8. 내려가기
+"""
+# 메모리 초과 안걸리게
+N = int(input())
+dp_max = list(map(int, input().split()))
+dp_min = dp_max[:]
+for _ in range(N-1):
+    array = list(map(int, input().split()))
+    p_max = [None] * 3
+    p_min = [None] * 3
+    for c in range(3):
+        if c == 0: up_left_max = 0; up_left_min = 1e12
+        else: up_left_max = dp_max[c-1]; up_left_min = dp_min[c-1]
+
+        if c == 2: up_right_max = 0; up_right_min = 1e12
+        else: up_right_max = dp_max[c+1]; up_right_min = dp_min[c+1]
+
+        up_max = dp_max[c]; up_min = dp_min[c]
+        p_max[c] = array[c]+max(up_left_max,up_right_max,up_max)
+        p_min[c] = array[c]+min(up_left_min,up_right_min,up_min)
+    dp_max = p_max[:]
+    dp_min = p_min[:]
+print(max(dp_max),min(dp_min))
 """
