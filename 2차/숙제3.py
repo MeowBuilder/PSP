@@ -87,6 +87,27 @@ for tc in range(int(input())):
         result = max(result,cave[i][m-1])
     print(result)
 """
+# 실습 병사 배치하기
+"""
+N = int(input())
+L = list(map(int, input().split()))
+dp = [1] * N
+'''
+# 가장 긴 증가하는 부분 수열(LIS)
+L.reverse()
+for i in range(1,N):
+    for j in range(0,i):
+        if L[j] < L[i]:
+            dp[i] = max(dp[i], dp[j] + 1)
+'''
+# 가장 긴 감소하는 부분 수열로 변형
+for i in range(1, N):
+    for j in range(0,i):
+        if L[j] > L[i]:
+            dp[i] = max(dp[i],dp[j]+1)
+
+print(N - max(dp))
+"""
 # 숙제 1. 정수삼각형
 """
 # 탑다운
@@ -133,6 +154,80 @@ def solution(m, n, puddles):
                 dp[r][c] = dp[r-1][c] + dp[r][c-1]
     return dp[n][m] % 1000000007
 print(solution(4,3,[[2,2]]))
+"""
+# 숙제 3. 베스트 앨범
+"""
+def solution(genres, plays):
+    array = []
+    for i in range(len(genres)):
+        array.append([i,genres[i],plays[i]])
+    array.sort(key = lambda x : x[2],reverse = True)
+    #print(array)
+
+    genres_dict = dict()
+    for i in range(len(genres)):
+        if genres[i] not in genres_dict:
+            genres_dict[genres[i]] = plays[i]
+        else:
+            genres_dict[genres[i]] += plays[i]
+    sorted_genres = sorted(genres_dict.items(), key= lambda x : x[1], reverse=True)
+    #print(sorted_genres)
+
+    answer = []
+    for genre in sorted_genres:
+        count = 0
+        for i in range(len(array)):
+            if array[i][1] == genre[0]:
+                #print(array[i])
+                answer.append(array[i][0])
+                count += 1
+                if count == 2:
+                    break
+    return answer
+"""
+"""
+#교수님 풀이
+def solution(genres, plays):
+    D = {} # 딕셔너리 key:value = 장르:[총재생횟수,(1등 고유번호, 횟수),(2등 고유번호, 횟수)]
+    for i in range(len(genres)):
+        genre, play = genres[i], plays[i]
+        if genre in D:
+            D[genre][0] += play
+            if D[genre][1][1] < play:
+                D[genre][1], D[genre][2] = (i,play), D[genre][1]
+            elif D[genre][2][1] < play:
+                D[genre][2] = (i,play)
+        else:
+            D[genre] = [play,(i,play),(-1,0)]
+    G = sorted(D.items(), key = lambda x : x[1][0], reverse = True)
+    answer = []
+    for i in range(len(G)):
+        answer.append(G[i][1][1][0])
+        if G[i][1][2][0] != -1:
+            answer.append(G[i][1][2][0])
+    return answer
+
+print(solution(["classic", "pop", "classic", "classic", "pop"],[500, 600, 150, 800, 2500]))
+"""
+# 숙제 4. 신고결과받기 (WIP)
+"""
+def solution(id_list, report, k):
+    reported = {}
+    for c in report:
+        A,B = c.split()
+        if B in reported:
+            reported[B][0] += 1
+            reported[B][1].append(A)
+        else:
+            reported[B] = [1,[A]]
+    answer = []
+
+    return answer
+
+print(solution(["muzi", "frodo", "apeach", "neo"],["muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi"],2))
+# [2,1,1,0]
+print(solution(["con", "ryan"],["ryan con", "ryan con", "ryan con", "ryan con"],3))
+# [0,0]
 """
 # 숙제 5. 도둑질
 """
@@ -209,4 +304,43 @@ for _ in range(N-1):
     dp_max = p_max[:]
     dp_min = p_min[:]
 print(max(dp_max),min(dp_min))
+"""
+# 숙제 9. 가장 큰 증가하는 부분 수열
+"""
+N = int(input())
+Ai = list(map(int, input().split()))
+dp = Ai[:]
+for i in range(1,N):
+    for j in range(0,i):
+        if Ai[j] < Ai[i]:
+            dp[i] = max(dp[i],dp[j] + Ai[i])
+print(max(dp))
+"""
+# 숙제 10. RGB거리
+"""
+N = int(input())
+array = [list(map(int, input().split())) for _ in range(N)]
+for i in range(1,N):
+    for j in range(3):
+        min_cost = 10000001
+        for k in range(3):
+            if j == k: continue
+            cost = array[i][j] + array[i-1][k]
+            if cost < min_cost:
+                min_cost = cost
+        array[i][j] = min_cost
+
+print(min(array[N-1]))
+"""
+"""
+#교수님 풀이
+N = int(input())
+dp = [list(map(int, input().split())) for _ in range(N)]
+
+for i in range(1,N):
+    for j in range(3):
+        dp[i][j] = dp[i][j] + min(dp[i-1][(j+1)%3],dp[i-1][(j+2)%3])
+
+
+print(min(dp[N-1]))
 """
