@@ -11,6 +11,7 @@ def fibo(x):
     return dp[x]
 print(fibo(1000))
 """
+from traceback import print_tb
 
 """
 # 바텀업
@@ -209,21 +210,64 @@ def solution(genres, plays):
 
 print(solution(["classic", "pop", "classic", "classic", "pop"],[500, 600, 150, 800, 2500]))
 """
-# 숙제 4. 신고결과받기 (WIP)
+# 숙제 4. 신고결과받기
 """
 def solution(id_list, report, k):
     reported = {}
     for c in report:
         A,B = c.split()
         if B in reported:
+            if A in reported[B][1]:
+                continue
             reported[B][0] += 1
             reported[B][1].append(A)
         else:
             reported[B] = [1,[A]]
+    mailed = {}
+    for c in reported:
+        A,B = reported[c]
+        if A >= k:
+            for id in B:
+                if id in mailed:
+                    mailed[id] += 1
+                else:
+                    mailed[id] = 1
     answer = []
-
+    for id in id_list:
+        if id in mailed:
+            answer.append(mailed[id])
+        else:
+            answer.append(0)
     return answer
-
+"""
+"""
+#교수님 풀이
+def solution(id_list, report, k):
+    D1 = {}
+    D2 = {}
+    for id in id_list:
+        D1[id] = set()
+        D2[id] = 0
+    for s in report:
+        user_id,bad_id = s.split()
+        D1[user_id].add(bad_id)
+    for bad_ids in D1.values():
+        for bad_id in bad_ids:
+            D2[bad_id] += 1
+    stop_ids = []
+    for bad_id,number in D2.items():
+        if number >= k:
+            stop_ids.append(bad_id)
+    answer = []
+    for bad_ids in D1.values():
+        n = 0
+        for bad_id in bad_ids:
+            if bad_id in stop_ids:
+                n+=1
+        answer.append(n)
+    return answer
+"""
+"""
 print(solution(["muzi", "frodo", "apeach", "neo"],["muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi"],2))
 # [2,1,1,0]
 print(solution(["con", "ryan"],["ryan con", "ryan con", "ryan con", "ryan con"],3))
