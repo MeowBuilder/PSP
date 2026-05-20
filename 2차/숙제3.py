@@ -11,7 +11,6 @@ def fibo(x):
     return dp[x]
 print(fibo(1000))
 """
-from traceback import print_tb
 
 """
 # 바텀업
