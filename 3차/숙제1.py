@@ -73,8 +73,8 @@ def dijkstra(start):
 dijkstra(1)
 print(distance[N])
 """
-"""
 # 숙제 2. 순회강연
+"""
 n = int(input())
 tasks = [list(map(int,input().split())) for _ in range(n)]
 tasks.sort(key=lambda x:-x[1]) # 내림차순 정렬, reverse=True 대신 숫자인 경우 -x로 가능함
@@ -89,8 +89,8 @@ for day in range(10000,0,-1):
         answer -= heapq.heappop(max_heap)
 print(answer)
 """
+# 숙제 3. 소가길을건너간이유4S
 """
-# 숙제 3. 소가길을건너간이유4
 C,N = map(int,input().split())
 T = [int(input()) for _ in range(C)]
 A = [list(map(int,input().split())) for _ in range(N)]
