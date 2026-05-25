@@ -89,17 +89,53 @@ for day in range(10000,0,-1):
         answer -= heapq.heappop(max_heap)
 print(answer)
 """
-# 숙제 3. 소가길을건너간이유4S
+# 숙제 3. 소가길을건너간이유4
 """
 C,N = map(int,input().split())
 T = [int(input()) for _ in range(C)]
 A = [list(map(int,input().split())) for _ in range(N)]
-T.sort(reverse=True)
-A.sort(key=lambda x:-x[1])
+T.sort()
+A.sort(key=lambda x:x[0])
 #print(T)
-# [9, 8, 7, 6, 2]
+# [2, 6, 7, 8, 9]
 #print(A)
 # [[8, 13], [4, 9], [2, 5], [0, 3]]
+answer = 0
+cow_index = 0
+min_heap = []
+for time in T:
+    while cow_index < N and A[cow_index][0] <= time:
+        heapq.heappush(min_heap, A[cow_index][1])
+        cow_index += 1
+    while min_heap and min_heap[0] < time:
+        heapq.heappop(min_heap)
+    
+    if min_heap:
+        heapq.heappop(min_heap)
+        answer += 1
+print(answer)
+"""
+# 숙제 4. 다음 순열
+"""
+N,K = map(int,input().split())
+array = [list(map(int,input().split())) for _ in range(K)]
+    
+def next_permutation(arr):
+    i = len(arr) - 1
+    while i > 0 and arr[i-1] >= arr[i]:
+        i -= 1
+    if i <= 0:
+        return False
+    j = len(arr) - 1
+    while arr[j] <= arr[i-1]:
+        j -= 1
+    arr[i-1], arr[j] = arr[j], arr[i-1]
+    arr[i:] = reversed(arr[i:])
+    return True
+
+for i in range(K):
+    next_permutation(array[i])
+    print(*array[i],end= ' \n')
 """
 # 숙제 5. 합승 택시
 """
@@ -214,3 +250,70 @@ for i in range(1,N+1):
     answer.append(distance[i] + rev_distance[i])
 print(max(answer))
 """
+# 숙제 7. 장애물
+'''
+sample input
+5 7
+2 1 5
+1 3 1
+3 2 8
+3 5 7
+3 4 3
+2 4 7
+4 5 2
+sample output
+2
+'''
+def dijkstra(start, V, graph, double_edge=None):
+    distances = [INF] * (V + 1)
+    parent = [0] * (V + 1)
+    
+    distances[start] = 0
+    queue = [(0, start)]
+    
+    while queue:
+        current_distance, current_node = heapq.heappop(queue)
+        
+        if distances[current_node] < current_distance:
+            continue
+            
+        for neighbor, weight in graph[current_node]:
+            if double_edge and ((current_node == double_edge[0] and neighbor == double_edge[1]) or 
+                                (current_node == double_edge[1] and neighbor == double_edge[0])):
+                next_weight = weight * 2
+            else:
+                next_weight = weight
+                
+            distance = current_distance + next_weight
+            
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                parent[neighbor] = current_node
+                heapq.heappush(queue, (distance, neighbor))
+                
+    return distances, parent
+
+V,E = map(int,input().split())
+graph = [[] for _ in range(V+1)]
+for _ in range(E):
+    a,b,c = map(int,input().split())
+    graph[a].append((b,c))
+    graph[b].append((a,c))
+orig_distance, parent = dijkstra(1, V, graph)
+A = orig_distance[V]
+
+path_edges = []
+curr = V
+while curr != 1:
+    prev = parent[curr]
+    path_edges.append((prev, curr))
+    curr = prev
+
+max_diff = 0
+for edge in path_edges:
+    double_distance, _ = dijkstra(1, V, graph, double_edge=edge)
+    B = double_distance[V]
+    if B != INF:
+        max_diff = max(max_diff, B - A)
+        
+print(max_diff)
