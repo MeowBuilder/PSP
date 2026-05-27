@@ -107,12 +107,11 @@ for time in T:
     while cow_index < N and A[cow_index][0] <= time:
         heapq.heappush(min_heap, A[cow_index][1])
         cow_index += 1
-    while min_heap and min_heap[0] < time:
-        heapq.heappop(min_heap)
-    
-    if min_heap:
-        heapq.heappop(min_heap)
-        answer += 1
+    while min_heap:
+        Bi = heapq.heappop(min_heap)
+        if time <= Bi:
+            answer += 1
+            break
 print(answer)
 """
 # 숙제 4. 다음 순열
@@ -264,6 +263,7 @@ sample input
 sample output
 2
 '''
+"""
 def dijkstra(start, V, graph, double_edge=None):
     distances = [INF] * (V + 1)
     parent = [0] * (V + 1)
@@ -317,3 +317,4 @@ for edge in path_edges:
         max_diff = max(max_diff, B - A)
         
 print(max_diff)
+"""
