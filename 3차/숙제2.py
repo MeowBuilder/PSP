@@ -178,33 +178,71 @@ def topology_sort():
 topology_sort()
 print(max(dp))
 """
-# 숙제 4. 개인정보수집유효기간(WIP)
-
+# 숙제 4. 개인정보수집유효기간
+"""
 def solution(today, terms, privacies):
-    split_term = dict()
-    now = list(map(int,today.split('.')))
     answer = []
+    
+    # 날짜를 총 '일(day)' 수로 바꿔주는 변환 함수
+    def to_days(date_str):
+        y, m, d = map(int, date_str.split('.'))
+        return (y * 12 * 28) + (m * 28) + d
 
+    # 1. 오늘 날짜를 일 수로 변환
+    today_days = to_days(today)
+    
+    # 2. 약관 종류별 유효기간 저장 (달 수 -> 일 수로 바로 변환해서 저장)
+    term_dict = {}
     for term in terms:
-        type,days = term.split()
-        split_term[type] = days
-
-    for i in range(len(privacies)):
-        date,term = privacies[i].split()
-        month = int(split_term[term])
-        Year,Month,Day = map(int,date.split('.'))
-        Month += month
-        if Month > 12:
-            Month -= 12
-            Year += 1
-        if now[0] > Year:
-            answer.append(i+1)
-        elif now[0] == Year and now[1] > Month:
-            answer.append(i+1)
-        elif now[0] == Year and now[1] == Month and now[2] >= Day:
-            answer.append(i+1)
+        t_type, t_month = term.split()
+        term_dict[t_type] = int(t_month) * 28  # 1달 = 28일
+        
+    # 3. 개인정보 만료 여부 확인
+    for i, privacy in enumerate(privacies):
+        p_date, p_type = privacy.split()
+        
+        # (수집된 날의 총 일수) + (약관 유효 기간 일수) = 만료되는 날(이 날부터 파기)
+        expire_days = to_days(p_date) + term_dict[p_type]
+        
+        # 오늘 날짜가 만료일과 같거나 지났다면 파기 대상
+        if today_days >= expire_days:
+            answer.append(i + 1)
+            
     return answer
-print(solution("2022.05.19",["A 6", "B 12", "C 3"],["2021.06.02 A", "2021.07.01 B", "2022.02.19 C", "2022.02.20 C"]))
-# result [1,3]
-print(solution("2020.01.01",["Z 3", "D 5"],["2019.01.01 D", "2019.11.15 Z", "2019.08.02 D", "2019.07.01 D", "2018.12.28 Z"]))
-# result [1, 4, 5]
+"""
+# 숙제 5. 신규 아이디 추천
+
+def solution(new_id):
+    new_id = new_id.lower()
+    
+    answer = ""
+    for char in new_id:
+        if char.isalnum() or char in ['-', '_', '.']:
+            answer += char
+            
+    while '..' in answer:
+        answer = answer.replace('..', '.')
+
+    if answer and answer[0] == '.':
+        answer = answer[1:]
+    if answer and answer[-1] == '.':
+        answer = answer[:-1]
+        
+    if answer == '':
+        answer = 'a'
+        
+    if len(answer) >= 16:
+        answer = answer[:15]
+        if answer[-1] == '.':
+            answer = answer[:-1]
+            
+    while len(answer) < 3:
+        answer += answer[-1]
+        
+    return answer
+
+print(solution("...!@BaT#*..y.abcdefghijklm"))
+print(solution("z-+.^."))
+print(solution("=.="))
+print(solution("123_.def"))
+print(solution("abcdefghijklmn.p"))
