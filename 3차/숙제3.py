@@ -94,21 +94,30 @@ while True:
         break
     N += 1
 """
-# 숙제 3. b진법(WIP)
+# 숙제 3. b진법
+"""
 b,N,M = map(int,input().split())
-N_L = list(map(int,input().split()))
-N_L = N_L[::-1]
-M_L = list(map(int,input().split()))
-M_L = M_L[::-1]
-N_ten = 0
-M_ten = 0
-for i in range(len(N_L)):
-    N_ten += N_L[i] * b**i
-for i in range(len(M_L)):
-    M_ten += M_L[i] * b**i
-answer = N_ten * M_ten
+A = list(map(int,input().split()))[::-1]
+B = list(map(int,input().split()))[::-1]
 
+result = [0] * (len(A) + len(B))
 
+for i in range(len(A)):
+    for j in range(len(B)):
+        result[i+j] += A[i] * B[j]
+carry = 0
+for i in range(len(result)):
+    total = result[i] + carry
+    result[i] = total % b
+    carry = total // b
+if carry > 0:
+    result.append(carry)
+while len(result) > 1 and result[-1] == 0:
+    result.pop()
+
+print(len(result))
+print(' '.join(map(str,result[::-1])))
+"""
 # 숙제 4. 목재총량
 """
 M,N = map(int,input().split())
@@ -123,4 +132,41 @@ C = int(input())
 for _ in range(C):
     r1,c1,r2,c2 = map(int,input().split())
     print(dp[r2][c2] - dp[r2][c1-1] - dp[r1-1][c2] + dp[r1-1][c1-1])
+"""
+# 숙제 5.이분탐색 사회적 거리두기 III 
+"""
+N,M = map(int,input().split())
+array = [list(map(int,input().split())) for _ in range(M)]
+
+array.sort()
+
+def can_place(D):
+    count = 1
+    last_position = array[0][0]
+    for a,b in array:
+        next_position = last_position + D
+        if next_position < a:
+            next_position = a
+        if next_position <= b:
+            placed = (b - next_position) // D + 1
+            count += placed
+            last_position = next_position + (placed - 1) * D
+            
+        if count >= N:
+            return True
+    return count >= N
+
+left = 1
+right = array[-1][1] - array[0][0]
+result = 1
+
+while left <= right:
+    mid = (left + right) // 2
+    if can_place(mid):
+        result = mid
+        left = mid + 1
+    else:
+        right = mid - 1
+        
+print(result)
 """
